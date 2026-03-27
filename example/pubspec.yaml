@@ -1,0 +1,16 @@
+name: flutter_golden_animation_example
+description: Example usage of flutter_golden_animation
+
+environment:
+  sdk: ^3.7.1
+  flutter: ">=3.29.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_golden_animation:
+    path: ../

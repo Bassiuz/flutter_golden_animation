@@ -1,29 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_golden_animation/src/apng/decoder.dart';
 import 'package:flutter_golden_animation/src/apng/encoder.dart';
 import 'package:flutter_golden_animation/src/apng/chunks.dart';
-
-Uint8List createTestPng({int red = 255, int green = 0, int blue = 0, int alpha = 255}) {
-  final builder = BytesBuilder();
-  builder.add(pngSignature);
-
-  final ihdrData = Uint8List(13);
-  final ihdrView = ByteData.sublistView(ihdrData);
-  ihdrView.setUint32(0, 1);
-  ihdrView.setUint32(4, 1);
-  ihdrData[8] = 8;
-  ihdrData[9] = 6;
-  builder.add(PngChunk('IHDR', ihdrData).toBytes());
-
-  final rawRow = Uint8List.fromList([0, red, green, blue, alpha]);
-  final compressed = ZLibCodec(level: 0).encode(rawRow);
-  builder.add(PngChunk('IDAT', Uint8List.fromList(compressed)).toBytes());
-  builder.add(PngChunk('IEND', Uint8List(0)).toBytes());
-
-  return Uint8List.fromList(builder.toBytes());
-}
+import '../helpers/test_png.dart';
 
 void main() {
   group('ApngDecoder', () {

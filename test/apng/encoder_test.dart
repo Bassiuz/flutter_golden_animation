@@ -1,36 +1,8 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_golden_animation/src/apng/encoder.dart';
 import 'package:flutter_golden_animation/src/apng/chunks.dart';
-
-/// Creates a minimal valid 1x1 red RGBA PNG for testing.
-Uint8List createTestPng({int red = 255, int green = 0, int blue = 0, int alpha = 255}) {
-  final builder = BytesBuilder();
-  builder.add(pngSignature);
-
-  // IHDR: 1x1, 8-bit RGBA
-  final ihdrData = Uint8List(13);
-  final ihdrView = ByteData.sublistView(ihdrData);
-  ihdrView.setUint32(0, 1); // width
-  ihdrView.setUint32(4, 1); // height
-  ihdrData[8] = 8;  // bit depth
-  ihdrData[9] = 6;  // color type RGBA
-  ihdrData[10] = 0; // compression
-  ihdrData[11] = 0; // filter
-  ihdrData[12] = 0; // interlace
-  builder.add(PngChunk('IHDR', ihdrData).toBytes());
-
-  // IDAT: zlib-compressed row (filter byte 0 + RGBA pixel)
-  final rawRow = Uint8List.fromList([0, red, green, blue, alpha]);
-  final compressed = ZLibCodec(level: 0).encode(rawRow);
-  builder.add(PngChunk('IDAT', Uint8List.fromList(compressed)).toBytes());
-
-  // IEND
-  builder.add(PngChunk('IEND', Uint8List(0)).toBytes());
-
-  return Uint8List.fromList(builder.toBytes());
-}
+import '../helpers/test_png.dart';
 
 void main() {
   group('ApngEncoder', () {

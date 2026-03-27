@@ -5,9 +5,14 @@ environment:
   sdk: ^3.7.1
   flutter: ">=3.29.0"
 
+flutter:
+  uses-material-design: true
+
 dependencies:
   flutter:
     sdk: flutter
+  neo_fade_ui:
+    path: ../../neo-fade-ui
 
 dev_dependencies:
   flutter_test:

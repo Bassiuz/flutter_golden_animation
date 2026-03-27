@@ -18,7 +18,7 @@ class PngChunk {
       throw FormatException('Chunk data truncated');
     }
     final type = String.fromCharCodes(bytes.sublist(4, 8));
-    final data = Uint8List.sublistView(bytes, 8, 8 + length);
+    final data = Uint8List.fromList(bytes.sublist(8, 8 + length));
 
     if (validateCrc) {
       final expectedCrc = view.getUint32(8 + length);
@@ -63,7 +63,7 @@ class PngChunk {
 /// Parses all chunks from a PNG/APNG file.
 ///
 /// Validates the 8-byte PNG signature, then reads chunks sequentially.
-List<PngChunk> parsePngChunks(Uint8List pngBytes) {
+List<PngChunk> parsePngChunks(Uint8List pngBytes, {bool validateCrc = false}) {
   if (pngBytes.length < 8) {
     throw FormatException('File too short to be a PNG');
   }
@@ -87,7 +87,7 @@ List<PngChunk> parsePngChunks(Uint8List pngBytes) {
 
     final chunkBytes =
         Uint8List.sublistView(pngBytes, offset, offset + chunkSize);
-    chunks.add(PngChunk.fromBytes(chunkBytes));
+    chunks.add(PngChunk.fromBytes(chunkBytes, validateCrc: validateCrc));
     offset += chunkSize;
   }
 

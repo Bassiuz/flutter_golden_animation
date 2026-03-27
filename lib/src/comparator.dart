@@ -8,6 +8,7 @@ import 'apng/encoder.dart';
 import 'diff/diff_image.dart';
 import 'diff/frame_comparator.dart';
 import 'diff/report.dart';
+import 'viewer.dart';
 
 /// Custom [GoldenFileComparator] that handles APNG comparison and
 /// generates failure artifacts (expected, actual, diff APNGs and a report).
@@ -98,6 +99,7 @@ class ApngGoldenComparator extends GoldenFileComparator {
     final goldenFile = File.fromUri(_resolveUri(golden));
     await goldenFile.parent.create(recursive: true);
     await goldenFile.writeAsBytes(imageBytes, flush: true);
+    await generateViewer(goldenFile.parent);
   }
 
   Uri _resolveUri(Uri golden) {
@@ -144,5 +146,7 @@ class ApngGoldenComparator extends GoldenFileComparator {
     } else if (message != null) {
       await File('${failDir.path}/report.txt').writeAsString(message);
     }
+
+    await generateViewer(failDir);
   }
 }

@@ -25,8 +25,6 @@ void main() {
       frameRate: 10,
     );
 
-    await tester.runAsync(() async {
-      await recorder.compareWithGolden('goldens/example_button_press.apng');
-    });
+    await recorder.compareWithGolden('goldens/example_button_press.apng');
   });
 }

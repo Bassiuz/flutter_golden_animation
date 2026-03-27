@@ -52,18 +52,23 @@ class AnimationRecorder {
   }
 
   /// Compares captured frames against a golden APNG file.
+  ///
+  /// Uses [WidgetTester.runAsync] internally for file I/O,
+  /// so callers don't need to wrap this call themselves.
   Future<void> compareWithGolden(String goldenPath) async {
     final apngBytes = toApng();
     final uri = Uri.parse(goldenPath);
 
-    if (autoUpdateGoldenFiles) {
-      await goldenFileComparator.update(uri, apngBytes);
-    } else {
-      final bool passed = await goldenFileComparator.compare(apngBytes, uri);
-      if (!passed) {
-        throw TestFailure('Animation golden test failed for $goldenPath');
+    await _tester.runAsync(() async {
+      if (autoUpdateGoldenFiles) {
+        await goldenFileComparator.update(uri, apngBytes);
+      } else {
+        final bool passed = await goldenFileComparator.compare(apngBytes, uri);
+        if (!passed) {
+          throw TestFailure('Animation golden test failed for $goldenPath');
+        }
       }
-    }
+    });
   }
 
   Future<Uint8List> _captureFrame() async {

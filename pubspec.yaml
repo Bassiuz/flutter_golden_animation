@@ -1,9 +1,7 @@
 name: flutter_golden_animation
 description: >-
-  Animation golden testing for Flutter. Captures widget animation frames as
-  lossless APNG golden files with pixel-perfect comparison, frame-level diff
-  reporting, and an auto-generated HTML viewer for browsing animations locally.
-version: 0.1.0
+  Animation golden testing for Flutter. Captures widget animation frames as lossless APNG golden files.
+version: 0.1.1
 repository: https://github.com/bassiuz/flutter_golden_animation
 issue_tracker: https://github.com/bassiuz/flutter_golden_animation/issues
 

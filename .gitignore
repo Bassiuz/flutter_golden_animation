@@ -1,3 +1,22 @@
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
 
-# FVM Version Cache
+# FVM
 .fvm/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Test artifacts
+**/failures/
+
+# OS
+.DS_Store
+Thumbs.db

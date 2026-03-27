@@ -1,0 +1,20 @@
+# Build artifacts
+build/
+.dart_tool/
+
+# IDE
+.vscode/
+.idea/
+
+# FVM
+.fvm/
+
+# Test artifacts
+**/failures/
+
+# Design docs (not needed by package users)
+doc/plans/
+
+# Example build artifacts (but keep goldens — they're the showcase!)
+example/build/
+example/pubspec.lock

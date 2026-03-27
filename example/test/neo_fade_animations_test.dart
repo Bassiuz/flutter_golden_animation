@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_golden_animation/flutter_golden_animation.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:neo_fade_ui/neo_fade_ui.dart';
 
 /// Wraps a widget in NeoFadeTheme + MaterialApp + RepaintBoundary for testing.
@@ -24,8 +24,7 @@ Widget wrapWithTheme(Widget child) {
 void main() {
   setupGoldenAnimationCompare();
 
-  testWidgets('NeoCircularProgressIndicator spinning animation',
-      (tester) async {
+  testWidgets('NeoCircularProgressIndicator spinning animation', (tester) async {
     await tester.pumpWidget(
       wrapWithTheme(
         const Center(
@@ -33,11 +32,7 @@ void main() {
             width: 80,
             height: 80,
             child: Center(
-              child: NeoCircularProgressIndicator(
-                size: 60,
-                strokeWidth: 5,
-                showGlow: true,
-              ),
+              child: NeoCircularProgressIndicator(size: 60, strokeWidth: 5, showGlow: true),
             ),
           ),
         ),
@@ -47,14 +42,9 @@ void main() {
     final recorder = AnimationRecorder(tester);
 
     // Record one full rotation cycle (1500ms)
-    await recorder.record(
-      duration: const Duration(milliseconds: 1500),
-      frameRate: 15,
-    );
+    await recorder.record(duration: const Duration(milliseconds: 1500), frameRate: 15);
 
-    await recorder.compareWithGolden(
-      'goldens/neo_circular_progress_spinner.apng',
-    );
+    await recorder.compareWithGolden('goldens/neo_circular_progress_spinner.apng');
   });
 
   testWidgets('NeoBottomNavCTA idle floating animation', (tester) async {
@@ -82,8 +72,7 @@ void main() {
                   icon: IconData(0xe7fd, fontFamily: 'MaterialIcons'),
                 ),
               ],
-              centerIcon:
-                  const IconData(0xe3b0, fontFamily: 'MaterialIcons'),
+              centerIcon: const IconData(0xe3b0, fontFamily: 'MaterialIcons'),
               onCenterPressed: () {},
               animated: true,
             ),
@@ -95,14 +84,9 @@ void main() {
     final recorder = AnimationRecorder(tester);
 
     // Record one full float cycle (2 seconds up + 2 seconds down)
-    await recorder.record(
-      duration: const Duration(milliseconds: 4000),
-      frameRate: 10,
-    );
+    await recorder.record(duration: const Duration(milliseconds: 4000), frameRate: 10);
 
-    await recorder.compareWithGolden(
-      'goldens/neo_bottom_nav_cta_float.apng',
-    );
+    await recorder.compareWithGolden('goldens/neo_bottom_nav_cta_float.apng');
   });
 
   testWidgets('NeoSnackbar slide-in animation', (tester) async {
@@ -122,14 +106,12 @@ void main() {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   entry = NeoSnackbar.show(
                     context: context,
-                    message: 'Item saved successfully!',
+                    message: 'Item saved successfully dit is een test!',
                     type: NeoSnackbarType.success,
                     duration: const Duration(seconds: 10),
                   );
                 });
-                return const Scaffold(
-                  body: SizedBox.expand(),
-                );
+                return const Scaffold(body: SizedBox.expand());
               },
             ),
           ),
@@ -140,14 +122,9 @@ void main() {
     final recorder = AnimationRecorder(tester);
 
     // The postFrameCallback fires on the first pump, triggering the snackbar
-    await recorder.record(
-      duration: const Duration(milliseconds: 500),
-      frameRate: 15,
-    );
+    await recorder.record(duration: const Duration(milliseconds: 500), frameRate: 15);
 
-    await recorder.compareWithGolden(
-      'goldens/neo_snackbar_slide_in.apng',
-    );
+    await recorder.compareWithGolden('goldens/neo_snackbar_slide_in.apng');
 
     // Clean up: remove the overlay entry and advance past the pending timer
     entry.remove();

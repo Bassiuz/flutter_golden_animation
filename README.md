@@ -1,21 +1,32 @@
 # flutter_golden_animation
 
-Animation golden testing for Flutter. Captures animation frames as APNG goldens with frame-level diff reporting. Zero external dependencies.
+[![pub package](https://img.shields.io/pub/v/flutter_golden_animation.svg)](https://pub.dev/packages/flutter_golden_animation)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+Animation golden testing for Flutter. Captures widget animation frames as lossless APNG golden files with pixel-perfect comparison, frame-level diff reporting, and an auto-generated HTML viewer.
+
+APNG goldens render inline on GitHub, so reviewers can watch animations play directly in pull requests.
+
+## Features
+
+- Record widget animations frame-by-frame at any frame rate
+- Lossless APNG golden files (full RGBA, no compression artifacts)
+- Pixel-perfect comparison with configurable tolerance
+- Detailed failure artifacts: expected/actual/diff APNGs + per-frame diffs + text report
+- Auto-generated `viewer.html` for browsing animations locally in any browser
+- Zero external dependencies
+- Standard `--update-goldens` workflow
 
 ## Installation
 
-Add the package as a dev dependency in your `pubspec.yaml`:
+Add as a dev dependency:
 
 ```yaml
 dev_dependencies:
-  flutter_golden_animation:
-    git:
-      url: https://github.com/bassiuz/flutter_golden_animation.git
+  flutter_golden_animation: ^0.1.0
 ```
 
-Then run `fvm flutter pub get`.
-
-## Quick start
+## Quick Start
 
 ```dart
 import 'package:flutter/material.dart';
@@ -47,53 +58,87 @@ void main() {
 }
 ```
 
-## How it works
+## How It Works
 
-1. `AnimationRecorder` captures frames via `RepaintBoundary.toImage()` at the specified frame rate.
-2. Frames are encoded into a lossless APNG file (the golden).
-3. APNG goldens render inline on GitHub -- reviewers can see the animation play directly in PRs.
-4. On test failure: generates expected/actual/diff APNGs, per-frame diff PNGs, and a text report.
+1. **Record** -- `AnimationRecorder` captures frames via `RepaintBoundary.toImage()` at the specified frame rate.
+2. **Encode** -- Frames are encoded into a lossless APNG file (the golden).
+3. **Compare** -- On subsequent test runs, each frame is compared pixel-by-pixel against the golden.
+4. **Review** -- APNG goldens render inline on GitHub. A `viewer.html` is generated alongside goldens for local viewing.
 
-## Updating goldens
+## Updating Goldens
 
 Use the standard Flutter workflow:
 
 ```
-fvm flutter test --update-goldens
+flutter test --update-goldens
 ```
 
-## API reference
+This regenerates all golden APNG files and the `viewer.html` alongside them.
 
-### `setupGoldenAnimationCompare({double tolerance})`
+## API Reference
 
-Call once at the top of your test file (or in `setUpAll`). Installs the `ApngGoldenComparator` so that `.apng` golden files are compared frame-by-frame. The optional `tolerance` parameter controls how much pixel difference is allowed before a frame is marked as failed (default: 0.0).
+### `setupGoldenAnimationCompare({double tolerance = 0.0})`
 
-### `AnimationRecorder(tester)`
+Call once at the top of your test file. Installs the `ApngGoldenComparator` so `.apng` goldens are compared frame-by-frame.
 
-Create an instance with your `WidgetTester`. Key methods:
+- `tolerance` -- Maximum allowed pixel diff percentage per frame (default: `0.0`, pixel-perfect).
 
-- `record({required VoidCallback interaction, required Duration duration, required int frameRate})` -- Triggers the interaction, then pumps frames at the given rate for the specified duration.
-- `compareWithGolden(String path)` -- Compares the recorded frames against the golden APNG at `path`. Creates the golden file when run with `--update-goldens`.
+### `AnimationRecorder`
+
+```dart
+final recorder = AnimationRecorder(tester);
+```
+
+**`record({interaction, duration, frameRate})`**
+
+Records animation frames. The optional `interaction` callback (e.g., a tap) fires before frame capture begins. `duration` controls how long to record, `frameRate` sets the capture rate in fps (default: 60).
+
+**`compareWithGolden(String path)`**
+
+Compares recorded frames against the golden APNG at `path`. When run with `--update-goldens`, writes the golden instead of comparing.
+
+**`toApng()`**
+
+Returns the recorded frames as APNG bytes without comparing. Useful for custom workflows.
+
+**`frames`**
+
+The captured frames as a list of PNG byte arrays.
 
 ### `ApngGoldenComparator`
 
-For advanced use. Lets you configure a custom tolerance or test directory directly, rather than going through `setupGoldenAnimationCompare`.
+For advanced use. Extends Flutter's `GoldenFileComparator` with APNG-aware comparison. Use `setupGoldenAnimationCompare()` for the standard setup, or instantiate directly for custom configuration:
 
-## Failure artifacts
+```dart
+goldenFileComparator = ApngGoldenComparator(
+  testDir: Directory.current.uri,
+  tolerance: 0.5, // allow 0.5% pixel diff per frame
+);
+```
 
-When a golden comparison fails, the package writes detailed artifacts to a `failures/` directory:
+## Failure Artifacts
+
+When a comparison fails, detailed artifacts are written to a `failures/` directory:
 
 ```
 failures/
   button_press/
-    expected.apng
-    actual.apng
-    diff.apng
-    frame_012_diff.png
-    report.txt
+    expected.apng      -- the golden animation
+    actual.apng        -- what the test produced
+    diff.apng          -- animated diff with changed pixels in red
+    frame_012_diff.png -- per-frame diff for failing frames
+    report.txt         -- summary with per-frame mismatch percentages
+    viewer.html        -- open in browser to see all artifacts
 ```
 
-- `expected.apng` / `actual.apng` -- The golden and the test run, viewable in any browser.
-- `diff.apng` -- Animated diff highlighting changed pixels.
-- `frame_NNN_diff.png` -- Per-frame diff images for frames that exceeded the tolerance.
-- `report.txt` -- Human-readable summary with per-frame mismatch percentages.
+## Viewing Goldens
+
+APNG files don't play in Finder or most image viewers. To view your golden animations:
+
+- **In browser** -- Open the auto-generated `viewer.html` in the goldens directory
+- **On GitHub** -- APNG files render and animate inline in PRs and file views
+- **In VS Code** -- Right-click `viewer.html` and choose "Open with Live Server" or "Open in Browser"
+
+## License
+
+MIT. See [LICENSE](LICENSE) for details.

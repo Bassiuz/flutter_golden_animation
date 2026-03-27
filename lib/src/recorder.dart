@@ -7,7 +7,24 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'apng/encoder.dart';
 
+/// Records animation frames from a widget test and encodes them as APNG.
+///
+/// Wrap your widget in a [RepaintBoundary], create an [AnimationRecorder],
+/// call [record] to capture frames, then [compareWithGolden] to compare
+/// against a golden APNG file.
+///
+/// ```dart
+/// final recorder = AnimationRecorder(tester);
+/// await recorder.record(
+///   interaction: () => tester.tap(find.byType(MyButton)),
+///   duration: Duration(milliseconds: 300),
+///   frameRate: 10,
+/// );
+/// await recorder.compareWithGolden('goldens/my_animation.apng');
+/// ```
 class AnimationRecorder {
+  /// Creates a recorder that uses the given [WidgetTester] to pump frames
+  /// and capture images.
   AnimationRecorder(this._tester);
 
   final WidgetTester _tester;
